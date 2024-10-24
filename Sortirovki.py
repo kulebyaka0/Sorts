@@ -1,4 +1,8 @@
 import matplotlib.pyplot as plt
+import numpy as np
+from random import*
+import time
+import math
 
 #SelectionSort
 def SelectionSort(a):
@@ -11,28 +15,24 @@ def SelectionSort(a):
         a[i] = a[min]
         a[min] = z
 
-#ComparisonSort
-# def ComparisonSort(a)
-
 #InsertionSort
 def InsertionSort(a):
     for i in range(1, len(a)):
         j = i 
         while (j > 0 and a[j - 1] > a[j]):
-            z = a[j]
+            tmp = a[j]
             a[j] = a[j - 1]
-            a[j - 1] = z
+            a[j - 1] = tmp
             j = j - 1
 
 #BubbleSort
 def BubbleSort(a):
-    for i in range(len(a)):
-        for j in range(len(a) - i):
+    for i in range(len(a) - 1):
+        for j in range(len(a) - i - 1):
             if(a[j] > a[j + 1]):
-                tmp = a[i]
-                a[i] = a[i + 1]
-                a[i + 1] = tmp
-        
+                tmp = a[j]
+                a[j] = a[j + 1]
+                a[j + 1] = tmp
 
 #MergeSort
 def MergeList(a, b):
@@ -61,6 +61,49 @@ def MergeSort(a):
         a2 = MergeSort(a2)
     return MergeList(a1, a2)
 
+
+#ShellSort
+def ShellSort(a, gaps):
+    n = len(a)
+    for gap in gaps:
+        for i in range(gap, n):
+            j = i
+            while(j >= gap and a[j - gap] > a[j]):
+                a[j],a[j - gap] = a[j - gap],a[j]
+                j = j - gap
+    return a
+
+def HibbardGaps(n):
+    gaps = []
+    k = 1
+    i = 1
+    while(i <= n):
+        gaps.append(i)
+        i = 2 ** k - 1
+        k = k + 1
+    gaps.reverse()
+    return gaps
+
+def ShellGaps(n):
+    gaps = []
+    i = n // 2
+    while(i > 1):
+        gaps.append(i)
+        i = i // 2
+    return gaps
+
+def PrattGaps(n):
+    gaps = []
+    i = n
+    for i in range(0, math.ceil(math.log(n, 2))):
+        for j in range(0, math.ceil(math.log(n, 2))):
+            if ((3 ** i) * (2 ** i) > n / 2):
+                break
+            else:
+                gaps.append((3 ** i) * (2 ** j))
+    gaps.sort(reverse=True)
+    return gaps
+
 #QuickSort
 def QuickSort(a, left, right):
     if (left > right):
@@ -82,43 +125,27 @@ def QuickSort(a, left, right):
     QuickSort(a, left, j)
     QuickSort(a, i, right)
 
-#ShellSort
-def ShellSort(a, gaps):
-    n = len(a)
-    for gap in gaps:
-        for i in range(gap, n):
-            j = i
-            a1 = a[i]
-            while(j >= 1 and a[j - 1] > a1):
-                a[j] = a[j - 1]
-                j = j - 1
-            a[j] = a1
-    return a
-
-def ShellGaps(n):
-    gaps = []
-    i = n // 2
-    gaps.append(i)
-    while(i > 1):
-        i = i // 2
-        gaps.append(i)
-    return gaps
-
-
-n = [8, 4, 6, 1, 4, 0]
-
-#InsertionSort(n)
-
-#SelectionSort(n)
-
-#n = MergeSort(n)
-
-# left = 0
-# right = len(n) - 1
-# QuickSort(n, left, right)
-
-#ShellSort(n, ShellGaps(len(n)))
-
-BubbleSort(n)
-
-print(n)
+#HeapSort
+def Heap(a, n, i):
+    maxi = i
+    left = 2 * i + 1
+    right = 2 * i + 2
+    if (left < n and a[i] < a[left]):
+        maxi = left
+    if (right < n and a[i] < a[right]):
+        maxi = right
+    if(maxi != i):
+        tmp = a[i]
+        a[i] = a[maxi]
+        a[maxi] = tmp
+        Heap(a, n, maxi)
+    
+def HeapSort(a):
+    n = len(a) 
+    for i in range(n, -1, -1):
+        Heap(a, n, i)
+    for i in range(n - 1, 0, -1):
+        tmp = a[i]
+        a[i] = a[0]
+        a[0] = tmp 
+        Heap(a, i, 0)
